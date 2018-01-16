@@ -5,11 +5,15 @@
 "
 "   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 "     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" OR:
+"   $ cd .vim & mkdir plugged
+"	$ git clone --depth=1 https://github.com/jidzhang/vim-plug
 "
 " Edit your .vimrc
-"
+"	set rtp+=~/.vim/plugged/vim-plug
 "   call plug#begin('~/.vim/plugged')
-"
+"	" let plug manage plug
+"   Plug 'jidzhang/vim-plug'
 "   " Make sure you use single quotes
 "
 "   " Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
@@ -92,7 +96,7 @@ let g:loaded_plug = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
-let s:plug_src = 'https://github.com/junegunn/vim-plug.git'
+"let s:plug_src = 'https://github.com/junegunn/vim-plug.git'
 let s:plug_tab = get(s:, 'plug_tab', -1)
 let s:plug_buf = get(s:, 'plug_buf', -1)
 let s:mac_gui = has('gui_macvim') && has('gui_running')
@@ -142,7 +146,7 @@ function! s:define_commands()
   command! -nargs=* -bar -bang -complete=customlist,s:names PlugInstall call s:install(<bang>0, [<f-args>])
   command! -nargs=* -bar -bang -complete=customlist,s:names PlugUpdate  call s:update(<bang>0, [<f-args>])
   command! -nargs=0 -bar -bang PlugClean call s:clean(<bang>0)
-  command! -nargs=0 -bar PlugUpgrade if s:upgrade() | execute 'source' s:esc(s:me) | endif
+  "command! -nargs=0 -bar PlugUpgrade if s:upgrade() | execute 'source' s:esc(s:me) | endif
   command! -nargs=0 -bar PlugStatus  call s:status()
   command! -nargs=0 -bar PlugDiff    call s:diff()
   command! -nargs=? -bar -bang -complete=file PlugSnapshot call s:snapshot(<bang>0, <f-args>)
@@ -2204,32 +2208,32 @@ function! s:delete(range, force)
   endwhile
 endfunction
 
-function! s:upgrade()
-  echo 'Downloading the latest version of vim-plug'
-  redraw
-  let tmp = tempname()
-  let new = tmp . '/plug.vim'
-
-  try
-    let out = s:system(printf('git clone --depth 1 %s %s', s:plug_src, tmp))
-    if v:shell_error
-      return s:err('Error upgrading vim-plug: '. out)
-    endif
-
-    if readfile(s:me) ==# readfile(new)
-      echo 'vim-plug is already up-to-date'
-      return 0
-    else
-      call rename(s:me, s:me . '.old')
-      call rename(new, s:me)
-      unlet g:loaded_plug
-      echo 'vim-plug has been upgraded'
-      return 1
-    endif
-  finally
-    silent! call s:rm_rf(tmp)
-  endtry
-endfunction
+"function! s:upgrade()
+"  echo 'Downloading the latest version of vim-plug'
+"  redraw
+"  let tmp = tempname()
+"  let new = tmp . '/plug.vim'
+"
+"  try
+"    let out = s:system(printf('git clone --depth 1 %s %s', s:plug_src, tmp))
+"    if v:shell_error
+"      return s:err('Error upgrading vim-plug: '. out)
+"    endif
+"
+"    if readfile(s:me) ==# readfile(new)
+"      echo 'vim-plug is already up-to-date'
+"      return 0
+"    else
+"      call rename(s:me, s:me . '.old')
+"      call rename(new, s:me)
+"      unlet g:loaded_plug
+"      echo 'vim-plug has been upgraded'
+"      return 1
+"    endif
+"  finally
+"    silent! call s:rm_rf(tmp)
+"  endtry
+"endfunction
 
 function! s:upgrade_specs()
   for spec in values(g:plugs)
